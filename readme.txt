@@ -4,7 +4,7 @@ Donate link: http://vickio.net
 Tags: image, sidebar, widget, photo, picture
 Requires at least: 2.5
 Tested up to: 2.8
-Stable tag: 1.1
+Stable tag: 1.2
 
 The simple way to place images in your sidebars.
 
