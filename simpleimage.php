@@ -25,7 +25,7 @@ Author URI: http://vickio.net
 		Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA	 02110-1301	 USA
 */
 ?>
-<?
+<?php
 // Displays an image in the sidebar
 // $widget_args: number
 //		number: which of the several widgets of this type do we mean
@@ -63,7 +63,7 @@ function widget_simpleimage( $args, $widget_args = 1 ) {
 		<?php echo $after_image; ?>
 	</div>
 	<?php echo $after_widget; ?>
-<?
+<?php
 }
 
 // Displays form for image and link.	Also updates the data after a POST submit
