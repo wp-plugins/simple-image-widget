@@ -2,7 +2,7 @@
 /*
 Plugin Name: Simple Image Widget
 Description: Using this widget you can easily place an image and link in the sidebar. Supports multiple instances, so you can use it multiple times in multiple sidebars. 
-Version: 1.2
+Version: 1.3
 Author: Chris Vickio
 Author URI: http://vickio.net
 */
