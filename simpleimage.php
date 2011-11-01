@@ -2,7 +2,7 @@
 /*
 Plugin Name: Simple Image Widget
 Description: Using this widget you can easily place an image and link in the sidebar. It supports multiple instances, so you can use it multiple times in multiple sidebars. 
-Version: 2.0
+Version: 2.1
 Author: Chris Vickio
 Author URI: http://vickio.net
 */
@@ -54,7 +54,7 @@ class WP_Widget_Simple_Image extends WP_Widget {
   	echo $before_widget; ?>
   	<div class="simpleimage">
   	  <?php echo $before_image; ?>
-  		<img src="<?php echo $instance['image']; ?>" alt="<?php echo $instance['alt']; ?>" />
+  		<img src="<?php echo $instance['image']; ?>" alt="<?php echo $instance['alt']; ?>" title="<?php echo $instance['img_title']; ?>" />
   		<?php echo $after_image; ?>
   	</div>
   	<?php echo $after_widget;
@@ -65,6 +65,7 @@ class WP_Widget_Simple_Image extends WP_Widget {
 		$instance = $old_instance;
 		$instance['image'] = strip_tags($new_instance['image']);
 		$instance['alt'] = strip_tags($new_instance['alt']);
+		$instance['img_title'] = strip_tags($new_instance['img_title']);
 		$instance['link'] = strip_tags($new_instance['link']);
 		$instance['new_window'] = isset($new_instance['new_window']);
 		return $instance;
@@ -72,7 +73,7 @@ class WP_Widget_Simple_Image extends WP_Widget {
 
   // Display the widget form in the admin interface
 	function form( $instance ) {
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'image' => '', 'alt' => '', 'link' => '', 'new_window' => false ) );
+		$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'image' => '', 'alt' => '', 'img_title' => '', 'link' => '', 'new_window' => false ) );
 
     // Generate a title based on the image URL
 		if ($instance['image'])
@@ -84,7 +85,7 @@ class WP_Widget_Simple_Image extends WP_Widget {
 
 		<p>
 			<label for="<?php echo $this->get_field_id('image'); ?>">
-				<?php _e('Image URL:'); ?>
+				<?php _e('Image URL (required):'); ?>
 				<input class="widefat" id="<?php echo $this->get_field_id('image'); ?>" name="<?php echo $this->get_field_name('image'); ?>" type="text" value="<?php echo $instance['image']; ?>" />
 			</label>
 		</p>
@@ -94,13 +95,22 @@ class WP_Widget_Simple_Image extends WP_Widget {
 				<?php _e('Alternate Text:'); ?>
 				<input class="widefat" id="<?php echo $this->get_field_id('alt'); ?>" name="<?php echo $this->get_field_name('alt'); ?>" type="text" value="<?php echo $instance['alt']; ?>" />
 				<br />
-				<small><?php _e( 'Shown if image cannot be displayed' ); ?></small>
+				<small><?php _e( 'Shown if the image cannot be displayed' ); ?></small>
+			</label>
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('img_title'); ?>">
+				<?php _e('Title:'); ?>
+				<input class="widefat" id="<?php echo $this->get_field_id('img_title'); ?>" name="<?php echo $this->get_field_name('img_title'); ?>" type="text" value="<?php echo $instance['img_title']; ?>" />
+				<br />
+				<small><?php _e( 'Shown when the mouse cursor is held over the image' ); ?></small>
 			</label>
 		</p>
 
 		<p>
 			<label for="<?php echo $this->get_field_id('link'); ?>">
-				<?php _e('Link URL (optional):'); ?>
+				<?php _e('Link URL:'); ?>
 				<input class="widefat" id="<?php echo $this->get_field_id('link'); ?>" name="<?php echo $this->get_field_name('link'); ?>" type="text" value="<?php echo $instance['link']; ?>" />
 			</label>
 		</p>
