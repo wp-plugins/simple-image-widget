@@ -3,8 +3,8 @@ Contributors: vickio
 Donate link: http://vickio.net
 Tags: image, sidebar, widget, photo, picture
 Requires at least: 2.8
-Tested up to: 3.1.1
-Stable tag: 2.0
+Tested up to: 3.2.1
+Stable tag: 2.1
 
 The simple way to place images in your sidebars.
 
@@ -15,9 +15,10 @@ Using this widget you can easily place an image in the sidebar. You can also spe
 Once the plugin is enabled, the widget will be available in your widgets list as "Simple Image". You can add this widget to sidebars as many times as you need. The control interface allows you to specify the following options for each instance of the widget:
 
 * Image URL: The full URL to the image file
-* Alternate Text: Shown by the browser if image cannot be displayed
+* Alternate Text: Shown by the browser if the image cannot be displayed, or if image loading is disabled
+* Title: Displayed in a tooltip when the mouse cursor is held over the image for a few seconds
 * Link URL: URL to open when the image is clicked on (optional)
-* Open link in new window: If this is checked, the above link URL will open in a new browser window
+* Open link in new window: If this is enabled, the link will open in a new browser window
 
 == Installation ==
 
