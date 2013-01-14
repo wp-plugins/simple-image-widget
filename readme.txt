@@ -32,5 +32,8 @@ Read about the original thought behind creating this widget and ways it can be e
 
 == Changelog ==
 
+= 3.0.1 =
+* Removed the main plugin file for the previous version.
+
 = 3.0 =
 * Complete rewrite with new media manager support.
