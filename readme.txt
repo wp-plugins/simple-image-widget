@@ -32,6 +32,10 @@ Read about the original thought behind creating this widget and ways it can be e
 
 == Changelog ==
 
+= 3.0.2 =
+* Implemented feature for opening links in a new tab/window.
+* Fixed a bug preventing links in legacy widgets to not work.
+
 = 3.0.1 =
 * Removed the main plugin file for the previous version.
 
