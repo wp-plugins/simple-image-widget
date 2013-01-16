@@ -3,7 +3,7 @@ Contributors: blazersix, bradyvercher
 Tags: image widget, widget, media, media manager, sidebar, image, photo, picture
 Requires at least: 3.3
 Tested up to: 3.5
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
