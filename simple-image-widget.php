@@ -3,13 +3,13 @@
  * Plugin Name: Simple Image Widget
  * Plugin URI: https://wordpress.org/extend/plugins/simple-image-widget/
  * Description: A simple image widget utilizing the new WordPress media manager.
- * Version: 3.0.3
+ * Version: 3.0.4
  * Author: Blazer Six
  * Author URI: http://www.blazersix.com/
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: simple-image-widget
- * Domain Path: /languages/
+ * Domain Path: /languages
  *
  * @package SimpleImageWidget
  * @author Brady Vercher <brady@blazersix.com>
@@ -23,11 +23,6 @@
 require_once( plugin_dir_path( __FILE__ ) . 'class-simple-image-widget.php' );
 
 /**
- * Load the plugin when plugins are loaded.
- */
-add_action( 'plugins_loaded', array( 'Simple_Image_Widget_Loader', 'load' ) );
-
-/**
  * The main plugin class for loading the widget and attaching necessary hooks.
  *
  * @since 3.0.0
@@ -39,31 +34,30 @@ class Simple_Image_Widget_Loader {
 	 * @since 3.0.0
 	 */
 	public static function load() {
-		add_action( 'init', array( __CLASS__, 'l10n' ) );
+		self::load_textdomain();
 		add_action( 'widgets_init', array( __CLASS__, 'register_widget' ) );
-		
+
 		if ( is_simple_image_widget_legacy() ) {
 			return;
 		}
-		
+
 		add_action( 'init', array( __CLASS__, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_scripts' ) );
 		add_action( 'admin_head-widgets.php', array( __CLASS__, 'admin_head_widgets' ) );
 		add_action( 'admin_footer-widgets.php', array( __CLASS__, 'admin_footer_widgets' ) );
 	}
-	
+
 	/**
 	 * Plugin localization support.
 	 *
 	 * @since 3.0.0
 	 */
-	public static function l10n() {
-		// The "plugin_locale" filter is also used in load_plugin_textdomain()
+	public static function load_textdomain() {
 		$locale = apply_filters( 'plugin_locale', get_locale(), 'simple-image-widget' );
-		load_textdomain( 'simple-image-widget', WP_LANG_DIR . '/simple-image-widget/simple-image-widget-' . $locale . '.mo' );
-		load_plugin_textdomain( 'simple-image-widget', false, dirname( plugin_basename( __FILE__ ) ) . 'languages/' );
+		load_textdomain( 'simple-image-widget', WP_LANG_DIR . '/simple-image-widget/' . $locale . '.mo' );
+		load_plugin_textdomain( 'simple-image-widget', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
-	
+
 	/**
 	 * Register and localize generic script libraries.
 	 *
@@ -78,15 +72,15 @@ class Simple_Image_Widget_Loader {
 	 */
 	public static function init() {
 		wp_register_script( 'simple-image-widget', plugin_dir_url( __FILE__ ) . 'js/simple-image-widget.js', array( 'media-upload', 'media-views' ) );
-		
+
 		wp_localize_script( 'simple-image-widget', 'SimpleImageWidget', array(
 			'frameTitle'      => __( 'Choose an Attachment', 'simple-image-widget' ),
 			'frameUpdateText' => __( 'Update Attachment', 'simple-image-widget' ),
 			'fullSizeLabel'   => __( 'Full Size', 'simple-image-widget' ),
-			'imageSizeNames'  => self::get_image_size_names()
+			'imageSizeNames'  => self::get_image_size_names(),
 		) );
 	}
-	
+
 	/**
 	 * Register the image widget.
 	 *
@@ -95,7 +89,7 @@ class Simple_Image_Widget_Loader {
 	public static function register_widget() {
 		register_widget( 'Simple_Image_Widget' );
 	}
-	
+
 	/**
 	 * Enqueue scripts needed for selecting media.
 	 *
@@ -107,7 +101,7 @@ class Simple_Image_Widget_Loader {
 			wp_enqueue_script( 'simple-image-widget' );
 		}
 	}
-	
+
 	/**
 	 * Output CSS for styling the image widget in the dashboard.
 	 *
@@ -119,13 +113,13 @@ class Simple_Image_Widget_Loader {
 		.widget .widget-inside .simple-image-widget-form .simple-image-widget-control { padding: 20px 0; text-align: center; border: 1px dashed #aaa;}
 		.widget .widget-inside .simple-image-widget-form .simple-image-widget-control.has-image { padding: 10px; text-align: left; border: 1px dashed #aaa;}
 		.widget .widget-inside .simple-image-widget-form .simple-image-widget-control img { display: block; margin-bottom: 10px; max-width: 100%; height: auto;}
-		
+
 		.simple-image-widget-legacy-fields { margin-bottom: 1em; padding: 10px; background-color: #e0e0e0; border-radius: 3px;}
 		.simple-image-widget-legacy-fields p:last-child { margin-bottom: 0;}
 		</style>
 		<?php
 	}
-	
+
 	/**
 	 * Output custom handler for when an image is selected in the media manager.
 	 *
@@ -141,21 +135,21 @@ class Simple_Image_Widget_Loader {
 					model = selection.first(),
 					sizes = model.get('sizes'),
 					size, image;
-				
+
 				if ( sizes ) {
 					// The image size to display in the widget.
 					size = sizes['post-thumbnail'] || sizes.medium;
 				}
-				
+
 				if ( $sizeField.length ) {
 					// Builds the option elements for the size dropdown.
 					SimpleImageWidget.updateSizeDropdownOptions( $sizeField, sizes );
 				}
-				
+
 				size = size || model.toJSON();
-				
+
 				image = $( '<img />', { src: size.url, width: size.width } );
-						
+
 				$control.find('img').remove().end()
 					.prepend( image )
 					.addClass('has-image')
@@ -163,9 +157,9 @@ class Simple_Image_Widget_Loader {
 			});
 		});
 		</script>
-		<?php	
+		<?php
 	}
-	
+
 	/**
 	 * Get localized image size names.
 	 *
@@ -183,10 +177,11 @@ class Simple_Image_Widget_Loader {
 			'thumbnail' => __( 'Thumbnail', 'simple-image-widget' ),
 			'medium'    => __( 'Medium', 'simple-image-widget' ),
 			'large'     => __( 'Large', 'simple-image-widget' ),
-			'full'      => __( 'Full Size', 'simple-image-widget' )
+			'full'      => __( 'Full Size', 'simple-image-widget' ),
 		) );
 	}
 }
+add_action( 'plugins_loaded', array( 'Simple_Image_Widget_Loader', 'load' ) );
 
 /**
  * Check to see if the current version of WordPress supports the new media manager.
