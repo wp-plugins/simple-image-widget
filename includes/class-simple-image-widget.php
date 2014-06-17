@@ -45,9 +45,8 @@ class Simple_Image_Widget extends WP_Widget {
 		$widget_options = wp_parse_args(
 			$widget_options,
 			array(
-				'classname'          => 'widget_simpleimage', // Legacy class name.
-				'description'        => __( 'An image from your Media Library.', 'simple-image-widget' ),
-				'customizer_support' => true,
+				'classname'   => 'widget_simpleimage', // Legacy class name.
+				'description' => __( 'An image from your Media Library.', 'simple-image-widget' ),
 			)
 		);
 
@@ -74,8 +73,7 @@ class Simple_Image_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		$cache = (array) wp_cache_get( 'simple_image_widget', 'widget' );
-
-		if ( isset( $cache[ $this->id ] ) ) {
+		if ( ! $this->is_preview() && isset( $cache[ $this->id ] ) ) {
 			echo $cache[ $this->id ];
 			return;
 		}
@@ -113,8 +111,10 @@ class Simple_Image_Widget extends WP_Widget {
 
 		echo $output;
 
-		$cache[ $this->id ] = $output;
-		wp_cache_set( 'simple_image_widget', array_filter( $cache ), 'widget' );
+		if ( ! $this->is_preview() ) {
+			$cache[ $this->id ] = $output;
+			wp_cache_set( 'simple_image_widget', array_filter( $cache ), 'widget' );
+		}
 	}
 
 	/**
@@ -375,11 +375,29 @@ class Simple_Image_Widget extends WP_Widget {
 		$instance['link']       = esc_url_raw( $new_instance['link'] );
 		$instance['link_text']  = wp_kses_data( $new_instance['link_text'] );
 		$instance['new_window'] = isset( $new_instance['new_window'] );
-		$instance['text']       = wp_kses_data( $new_instance['text'] );
+		$instance['text']       = stripslashes( wp_filter_post_kses( addslashes( $new_instance['text'] ) ) );
 
 		$this->flush_widget_cache();
 
 		return $instance;
+	}
+
+	/**
+	 * Determine if the widget is being displayed in the customizer.
+	 *
+	 * @since 4.0.1
+	 * @link  https://core.trac.wordpress.org/ticket/27538
+	 *
+	 * @return bool
+	 */
+	public function is_preview() {
+		global $wp_customize;
+
+		if ( method_exists( parent, 'is_preview' ) ) {
+			return parent::is_preview();
+		}
+
+		return ( isset( $wp_customize ) && $wp_customize->is_preview() ) ;
 	}
 
 	/**
@@ -455,6 +473,7 @@ class Simple_Image_Widget extends WP_Widget {
 			$templates[] = $args['id'] . '_widget.php';
 		}
 		$templates[] = 'widget.php';
+
 		/**
 		 * List of template names to look up to render output.
 		 *
