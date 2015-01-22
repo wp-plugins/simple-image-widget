@@ -72,9 +72,11 @@ class Simple_Image_Widget extends WP_Widget {
 	 * @param array $instance The widget instance settings.
 	 */
 	public function widget( $args, $instance ) {
-		$cache = (array) wp_cache_get( 'simple_image_widget', 'widget' );
-		if ( ! $this->is_preview() && isset( $cache[ $this->id ] ) ) {
-			echo $cache[ $this->id ];
+		$cache    = (array) wp_cache_get( 'simple_image_widget', 'widget' );
+		$cache_id = $this->siw_get_cache_key( $args, $instance );
+
+		if ( ! $this->is_preview() && isset( $cache[ $cache_id ] ) ) {
+			echo $cache[ $cache_id ];
 			return;
 		}
 
@@ -128,7 +130,7 @@ class Simple_Image_Widget extends WP_Widget {
 		echo $output;
 
 		if ( ! $this->is_preview() ) {
-			$cache[ $this->id ] = $output;
+			$cache[ $cache_id ] = $output;
 			wp_cache_set( 'simple_image_widget', array_filter( $cache ), 'widget' );
 		}
 	}
@@ -298,7 +300,10 @@ class Simple_Image_Widget extends WP_Widget {
 							?>
 							<p class="<?php echo esc_attr( $this->siw_field_class( 'link' ) ); ?>">
 								<label for="<?php echo esc_attr( $this->get_field_id( 'link' ) ); ?>"><?php _e( 'Link:', 'simple-image-widget' ); ?></label>
-								<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'link' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'link' ) ); ?>" value="<?php echo esc_url( $instance['link'] ); ?>" class="widefat">
+								<span class="simple-image-widget-input-group">
+									<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'link' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'link' ) ); ?>" value="<?php echo esc_url( $instance['link'] ); ?>" class="simple-image-widget-input-group-field">
+									<button class="simple-image-widget-find-posts-button simple-image-widget-input-group-button dashicons dashicons-search"></button>
+								</span>
 							</p>
 							<p class="<?php echo esc_attr( $this->siw_field_class( 'new_window' ) ); ?>" style="margin-top: -0.75em; padding-left: 2px">
 								<label for="<?php echo esc_attr( $this->get_field_id( 'new_window' ) ); ?>">
@@ -422,7 +427,7 @@ class Simple_Image_Widget extends WP_Widget {
 			}
 		}
 
-		$this->flush_widget_cache();
+		$this->flush_group_cache();
 
 		return $instance;
 	}
@@ -471,21 +476,6 @@ class Simple_Image_Widget extends WP_Widget {
 		}
 
 		return $sizes;
-	}
-
-	/**
-	 * Remove a single image widget from the cache.
-	 *
-	 * @since 3.0.0
-	 */
-	public function flush_widget_cache() {
-		$cache = (array) wp_cache_get( 'simple_image_widget', 'widget' );
-
-		if ( isset( $cache[ $this->id ] ) ) {
-			unset( $cache[ $this->id ] );
-		}
-
-		wp_cache_set( 'simple_image_widget', array_filter( $cache ), 'widget' );
 	}
 
 	/**
@@ -558,4 +548,25 @@ class Simple_Image_Widget extends WP_Widget {
 
 		return implode( ' ', $classes );
 	}
+
+	/**
+	 * Retrieve a cache key based on a hash of passed parameters.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @return string
+	 */
+	protected function siw_get_cache_key() {
+		$data = array_reduce( func_get_args(), 'array_merge', array() );
+		ksort( $data );
+		return 'siw_' . md5( json_encode( $data ) );
+	}
+
+	/**
+	 * Remove a single image widget from the cache.
+	 *
+	 * @since 3.0.0
+	 * @deprecated 4.2.0
+	 */
+	public function flush_widget_cache() {}
 }
